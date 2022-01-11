@@ -2,11 +2,11 @@ import React from "react";
 import { useDrag, useDrop, XYCoord } from "react-dnd";
 import styled from "styled-components";
 import { Task as TaskModel } from "../model/task";
-import StringInput from "./StringInput";
 import {
   TaskDragAndDropItem,
   TaskDragAndDropResult,
 } from "../model/taskDragAndDrop";
+import Editable from "./Editable";
 
 const Card = styled.div`
   border: 1px solid lightgray;
@@ -100,8 +100,10 @@ const Task: React.FC<TaskProps> = ({ task, index, onChange, onMove }) => {
   drag(drop(ref));
 
   return (
-        <StringInput value={task.title} onChange={onChangeTitle} />
     <Card ref={ref}>
+      <Editable value={task.title} onChange={onChangeTitle}>
+        {(title) => title}
+      </Editable>
     </Card>
   );
 };
