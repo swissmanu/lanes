@@ -1,4 +1,6 @@
 import React from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import styled from "styled-components";
 import { Board as BoardModel } from "../model/board";
 import { Lane as LaneModel } from "../model/lane";
@@ -35,13 +37,15 @@ const Board: React.FC<BoardProps> = ({ board, onChange }) => {
   return (
     <>
       <Title>{board.title}</Title>
-      <Lanes>
-        {board.lanes.map((lane, i) => (
-          <div>
-            <Lane key={lane.id} lane={lane} onChange={createOnChangeLane(i)} />
-          </div>
-        ))}
-      </Lanes>
+      <DndProvider backend={HTML5Backend}>
+        <Lanes>
+          {board.lanes.map((lane, i) => (
+            <div key={lane.id}>
+              <Lane lane={lane} onChange={createOnChangeLane(i)} />
+            </div>
+          ))}
+        </Lanes>
+      </DndProvider>
     </>
   );
 };

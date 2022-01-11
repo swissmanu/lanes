@@ -1,4 +1,5 @@
 import React from "react";
+import { useDrag } from "react-dnd";
 import styled from "styled-components";
 import { Task as TaskModel } from "../model/task";
 import StringInput from "./StringInput";
@@ -22,9 +23,19 @@ const Task: React.FC<TaskProps> = ({ task, onChange }) => {
     [onChange, task]
   );
 
+  const [, dragHandle, dragPreview] = useDrag(
+    () => ({
+      type: "task",
+      item: task,
+    }),
+    [task]
+  );
+
   return (
-    <Card>
-      <StringInput value={task.title} onChange={onChangeTitle} />
+    <Card ref={dragPreview}>
+      <div ref={dragHandle}>
+        <StringInput value={task.title} onChange={onChangeTitle} />
+      </div>
     </Card>
   );
 };
