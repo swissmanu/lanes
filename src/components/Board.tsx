@@ -4,9 +4,19 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import styled from "styled-components";
 import { Board as BoardModel } from "../model/board";
 import { Lane as LaneModel } from "../model/lane";
+import DragLayer from "./DragLayer";
 import Lane from "./Lane";
 
-const Title = styled.h1``;
+const BoardContainer = styled.div`
+  padding: 16px;
+`;
+
+const Title = styled.h1`
+  font-size: 24px;
+  font-weight: 600;
+  margin: 24px 0px 16px 0px;
+  color: white;
+`;
 
 const Lanes = styled.div`
   display: grid;
@@ -35,9 +45,10 @@ const Board: React.FC<BoardProps> = ({ board, onChange }) => {
   );
 
   return (
-    <>
+    <BoardContainer>
       <Title>{board.title}</Title>
       <DndProvider backend={HTML5Backend}>
+        <DragLayer />
         <Lanes>
           {board.lanes.map((lane, i) => (
             <div key={lane.id}>
@@ -46,7 +57,7 @@ const Board: React.FC<BoardProps> = ({ board, onChange }) => {
           ))}
         </Lanes>
       </DndProvider>
-    </>
+    </BoardContainer>
   );
 };
 export default Board;
