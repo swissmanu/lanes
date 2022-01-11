@@ -39,7 +39,6 @@ const Lane: React.FC<LaneProps> = ({ lane, onChange }) => {
 
   const onMoveCard = React.useCallback(
     (fromIndex: number, toIndex: number) => {
-      console.log(fromIndex, toIndex);
       const removed = [
         ...lane.tasks.slice(0, fromIndex),
         ...lane.tasks.slice(fromIndex + 1),

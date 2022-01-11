@@ -22,7 +22,9 @@ export default function Editable<T>({
     setUncommitedValue(`${value}`);
   }, [value]);
 
-  const startEdit = React.useCallback(() => setEdit(true), []);
+  const startEdit = React.useCallback(() => {
+    setEdit(true);
+  }, []);
 
   if (edit) {
     return (

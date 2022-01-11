@@ -8,10 +8,12 @@ import {
 } from "../model/taskDragAndDrop";
 import Editable from "./Editable";
 
-const Card = styled.div`
+const Card = styled.div<{ dragging?: boolean }>`
   border: 1px solid lightgray;
   border-radius: 4px;
   padding: 8px;
+  background-color: ${({ dragging }) => (dragging ? "lightgray" : "white")};
+  color: ${({ dragging }) => (dragging ? "lightgray" : "black")};
 `;
 
 interface TaskProps {
@@ -31,10 +33,15 @@ const Task: React.FC<TaskProps> = ({ task, index, onChange, onMove }) => {
     [onChange, task]
   );
 
-  const [, drag] = useDrag<TaskDragAndDropItem, unknown, unknown>(
+  const [{ dragging }, drag] = useDrag<
+    TaskDragAndDropItem,
+    unknown,
+    { dragging: boolean }
+  >(
     () => ({
       type: "task",
       item: { task, index },
+      collect: (monitor) => ({ dragging: monitor.isDragging() }),
     }),
     [task]
   );
@@ -100,7 +107,7 @@ const Task: React.FC<TaskProps> = ({ task, index, onChange, onMove }) => {
   drag(drop(ref));
 
   return (
-    <Card ref={ref}>
+    <Card ref={ref} dragging={dragging}>
       <Editable value={task.title} onChange={onChangeTitle}>
         {(title) => title}
       </Editable>
