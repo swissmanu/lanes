@@ -1,20 +1,13 @@
 import React from "react";
 import { useDrag, useDrop, XYCoord } from "react-dnd";
-import styled from "styled-components";
+import { getEmptyImage } from "react-dnd-html5-backend";
 import { Task as TaskModel } from "../model/task";
 import {
   TaskDragAndDropItem,
   TaskDragAndDropResult,
 } from "../model/taskDragAndDrop";
+import Card from "./Card";
 import Editable from "./Editable";
-
-const Card = styled.div<{ dragging?: boolean }>`
-  border-radius: 3px;
-  padding: 8px;
-  background-color: ${({ dragging }) => (dragging ? "lightgray" : "white")};
-  color: ${({ dragging }) => (dragging ? "lightgray" : "black")};
-  box-shadow: 0 1px 0 #091e4240
-`;
 
 interface TaskProps {
   task: TaskModel;
@@ -33,7 +26,7 @@ const Task: React.FC<TaskProps> = ({ task, index, onChange, onMove }) => {
     [onChange, task]
   );
 
-  const [{ dragging }, drag] = useDrag<
+  const [{ dragging }, drag, preview] = useDrag<
     TaskDragAndDropItem,
     unknown,
     { dragging: boolean }
@@ -103,6 +96,10 @@ const Task: React.FC<TaskProps> = ({ task, index, onChange, onMove }) => {
     },
     [onMove, index]
   );
+
+  React.useEffect(() => {
+    preview(getEmptyImage(), { captureDraggingState: true });
+  }, [preview]);
 
   drag(drop(ref));
 
