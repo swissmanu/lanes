@@ -9,6 +9,11 @@ const astFixture = root([
     listItem([text("Task 1.2")]),
   ]),
   heading(2, [text("Lane 2")]),
-  list("unordered", [listItem([text("Task 2.1")]), listItem([text("Task 2.2")])]),
+  list("unordered", [
+    listItem([text("Task 2.1")]),
+    listItem([text("Task 2.2")]),
+    listItem([text("Task 2.3")]),
+    listItem([text("Task 2.4")]),
+  ]),
 ]) as Root;
 export default astFixture;

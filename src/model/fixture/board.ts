@@ -17,6 +17,8 @@ const boardFixture: Board = {
       tasks: [
         { id: "t3", title: "Task 2.1" },
         { id: "t4", title: "Task 2.2" },
+        { id: "t5", title: "Task 2.3" },
+        { id: "t6", title: "Task 2.4" },
       ],
     },
   ],
