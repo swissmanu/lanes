@@ -9,12 +9,24 @@ import {
 } from "../model/taskDragAndDrop";
 import Task from "./Task";
 
-const Title = styled.h2``;
+const LaneContainer = styled.div`
+  background-color: #ebecf0;
+  border-radius: 3px;
+`;
+
+const Title = styled.h2`
+  padding: 10px 8px;
+`;
 
 const Tasks = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding: 0 8px;
+`;
+
+const Footer = styled.div`
+  height: 10px;
 `;
 
 interface LaneProps {
@@ -82,7 +94,7 @@ const Lane: React.FC<LaneProps> = ({ lane, onChange }) => {
   );
 
   return (
-    <div ref={dropRef}>
+    <LaneContainer ref={dropRef}>
       <Title>{lane.title}</Title>
       <Tasks>
         {lane.tasks.map((task, i) => (
@@ -95,7 +107,8 @@ const Lane: React.FC<LaneProps> = ({ lane, onChange }) => {
           />
         ))}
       </Tasks>
-    </div>
+      <Footer />
+    </LaneContainer>
   );
 };
 export default Lane;

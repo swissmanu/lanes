@@ -10,8 +10,8 @@ const Title = styled.h1``;
 
 const Lanes = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, 250px);
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, 270px);
+  gap: 8px;
 `;
 
 interface BoardProps {

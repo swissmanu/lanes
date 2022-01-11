@@ -9,11 +9,11 @@ import {
 import Editable from "./Editable";
 
 const Card = styled.div<{ dragging?: boolean }>`
-  border: 1px solid lightgray;
-  border-radius: 4px;
+  border-radius: 3px;
   padding: 8px;
   background-color: ${({ dragging }) => (dragging ? "lightgray" : "white")};
   color: ${({ dragging }) => (dragging ? "lightgray" : "black")};
+  box-shadow: 0 1px 0 #091e4240
 `;
 
 interface TaskProps {
