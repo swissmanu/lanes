@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { Board as BoardModel } from "../model/board";
 import { Lane as LaneModel } from "../model/lane";
-import updateInArray from "../util/immutable/updateInArray";
 import Lane from "./Lane";
 
 const Title = styled.h1``;
@@ -19,16 +18,16 @@ interface BoardProps {
 }
 
 const Board: React.FC<BoardProps> = ({ board, onChange }) => {
-  const onChangeLane = React.useCallback(
-    (lane: LaneModel) => {
-      const updatedLanes = updateInArray(
-        board.lanes,
-        ({ id }) => id === lane.id,
-        lane
-      );
-      if (updatedLanes !== board.lanes) {
-        onChange({ ...board, lanes: updatedLanes });
-      }
+  const createOnChangeLane = React.useCallback(
+    (index: number) => (lane: LaneModel) => {
+      onChange({
+        ...board,
+        lanes: [
+          ...board.lanes.slice(0, index),
+          lane,
+          ...board.lanes.slice(index + 1),
+        ],
+      });
     },
     [board, onChange]
   );
@@ -37,9 +36,9 @@ const Board: React.FC<BoardProps> = ({ board, onChange }) => {
     <>
       <Title>{board.title}</Title>
       <Lanes>
-        {board.lanes.map((lane) => (
+        {board.lanes.map((lane, i) => (
           <div>
-            <Lane key={lane.id} lane={lane} onChange={onChangeLane} />
+            <Lane key={lane.id} lane={lane} onChange={createOnChangeLane(i)} />
           </div>
         ))}
       </Lanes>

@@ -19,16 +19,16 @@ interface LaneProps {
 }
 
 const Lane: React.FC<LaneProps> = ({ lane, onChange }) => {
-  const onChangeTask = React.useCallback(
-    (task: TaskModel) => {
-      const updatedTasks = updateInArray(
-        lane.tasks,
-        ({ id }) => id === task.id,
-        task
-      );
-      if (updatedTasks !== lane.tasks) {
-        onChange({ ...lane, tasks: updatedTasks });
-      }
+  const createOnChangeTask = React.useCallback(
+    (index: number) => (task: TaskModel) => {
+      onChange({
+        ...lane,
+        tasks: [
+          ...lane.tasks.slice(0, index),
+          task,
+          ...lane.tasks.slice(index + 1),
+        ],
+      });
     },
     [lane, onChange]
   );
@@ -37,8 +37,8 @@ const Lane: React.FC<LaneProps> = ({ lane, onChange }) => {
     <>
       <Title>{lane.title}</Title>
       <Tasks>
-        {lane.tasks.map((task) => (
-          <Task key={task.id} task={task} onChange={onChangeTask} />
+        {lane.tasks.map((task, i) => (
+          <Task key={task.id} task={task} onChange={createOnChangeTask(i)} />
         ))}
       </Tasks>
     </>
