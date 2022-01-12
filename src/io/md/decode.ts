@@ -31,10 +31,16 @@ const decodeMarkdown: Decoder<Root> = (ast) => {
 
       if (nextSibling?.type === "list") {
         for (const listItem of nextSibling.children) {
-          tasks.push({
-            id: `t${++taskId}`,
-            title: toMarkdown(listItem.children[0]).trim(),
-          });
+          const [firstChild] = listItem.children;
+          if (firstChild?.type === "paragraph") {
+            const text = toMarkdown(firstChild.children[0]).trim();
+            const [title, ...notes] = text.split("\n");
+            tasks.push({
+              id: `t${++taskId}`,
+              title,
+              ...(notes.length > 0 ? { notes: notes.join("\n") } : {}),
+            });
+          }
         }
       }
 
