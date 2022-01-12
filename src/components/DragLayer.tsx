@@ -1,6 +1,8 @@
 import { useDragLayer, XYCoord } from "react-dnd";
 import styled from "styled-components";
+import { Task as TaskModel } from "../model/task";
 import Card from "./Card";
+import Task from "./Task";
 
 const Layer = styled.div`
   position: fixed;
@@ -50,7 +52,12 @@ const DragLayer: React.FC<DragLayerProps> = () => {
   function renderItem() {
     switch (itemType) {
       case "task":
-        return <PreviewCard>Task</PreviewCard>;
+        const task = item.task as TaskModel;
+        return (
+          <PreviewCard>
+            <Task task={task} />
+          </PreviewCard>
+        );
       default:
         return null;
     }

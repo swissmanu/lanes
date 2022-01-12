@@ -5,9 +5,9 @@ import { Lane as LaneModel } from "../model/lane";
 import { Task as TaskModel } from "../model/task";
 import {
   TaskDragAndDropItem,
-  TaskDragAndDropResult,
+  TaskDragAndDropResult
 } from "../model/taskDragAndDrop";
-import Task from "./Task";
+import DraggableTask from "./DraggableTask";
 
 const LaneContainer = styled.div`
   background-color: #ebecf0;
@@ -98,7 +98,7 @@ const Lane: React.FC<LaneProps> = ({ lane, onChange }) => {
       <Title>{lane.title}</Title>
       <Tasks>
         {lane.tasks.map((task, i) => (
-          <Task
+          <DraggableTask
             key={task.id}
             task={task}
             index={i}
