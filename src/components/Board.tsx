@@ -2,8 +2,7 @@ import React from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import styled from "styled-components";
-import { Board as BoardModel } from "../model/board";
-import getViewModelFromBoard from "../model/viewModels/getViewModelFromBoard";
+import { BoardViewModel } from "../model/viewModels";
 import moveCard from "../model/viewModels/moveCard";
 import { Tail } from "../util/tail";
 import DragLayer from "./DragLayer";
@@ -27,26 +26,22 @@ const Lanes = styled.div`
 `;
 
 interface BoardProps {
-  board: BoardModel;
-  onChange: (board: BoardModel) => void;
+  board: BoardViewModel;
+  onChange: (board: BoardViewModel) => void;
 }
 
-const Board: React.FC<BoardProps> = ({ board, onChange }) => {
-  const { tasks, lanes } = React.useMemo(() => getViewModelFromBoard(board), [board]);
-
-  const [tasksState, setTasksState] = React.useState(tasks);
-  React.useEffect(() => setTasksState(tasks), [tasks]);
-
+const Board: React.FC<BoardProps> = ({ board: { lanes, tasks, title }, onChange }) => {
   const onMoveCard = React.useCallback(
     (...args: Tail<Parameters<typeof moveCard>>) => {
-      setTasksState(moveCard(tasksState, ...args));
+      const nextTasks = moveCard(tasks, ...args);
+      onChange({ lanes, tasks: nextTasks, title });
     },
-    [tasksState]
+    [lanes, onChange, tasks, title]
   );
 
   return (
     <BoardContainer>
-      <Title>{board.title}</Title>
+      <Title>{title}</Title>
       <DndProvider backend={HTML5Backend}>
         <DragLayer />
         <Lanes>
@@ -54,7 +49,7 @@ const Board: React.FC<BoardProps> = ({ board, onChange }) => {
             <div key={lane.id}>
               <Lane
                 lane={lane}
-                tasks={tasksState.filter((t) => t.laneId === lane.id) /* TODO Do this better*/}
+                tasks={tasks.filter((t) => t.laneId === lane.id) /* TODO Do this better*/}
                 onChange={() => {}}
                 onMoveCard={onMoveCard}
               />

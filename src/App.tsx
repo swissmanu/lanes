@@ -1,16 +1,18 @@
 import React from "react";
+import { createGlobalStyle } from "styled-components";
+import { Reset } from "styled-reset";
 import Board from "./components/Board";
 import boardFixture from "./model/fixture/board";
-import { Reset } from "styled-reset";
-import { createGlobalStyle } from "styled-components";
+import getViewModelFromBoard from "./model/viewModels/getViewModelFromBoard";
 
 function App() {
-  const [board, setBoard] = React.useState(boardFixture);
+  const [boardViewModel, setBoardViewModel] = React.useState(getViewModelFromBoard(boardFixture));
+
   return (
     <>
       <Reset />
       <GlobalStyles />
-      <Board board={board} onChange={setBoard} />
+      <Board board={boardViewModel} onChange={setBoardViewModel} />
     </>
   );
 }

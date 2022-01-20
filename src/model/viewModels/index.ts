@@ -9,6 +9,8 @@ export interface TaskViewModel extends Task {
 export type LaneViewModel = Omit<Lane, "tasks">;
 
 export interface BoardViewModel {
+  title: string;
+
   lanes: ReadonlyArray<LaneViewModel>;
 
   /**
