@@ -20,5 +20,6 @@ export default App;
 const GlobalStyles = createGlobalStyle`
 body {
   background: #0079BF;
+  font-family: 'Helvetica Neue', 'Arial Nova', Helvetica, Arial, sans-serif;
 }
 `;

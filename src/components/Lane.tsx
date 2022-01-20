@@ -14,6 +14,7 @@ const LaneContainer = styled.div`
 
 const Title = styled.h2`
   padding: 10px 8px;
+  font-weight: 600;
 `;
 
 const Tasks = styled.div`
