@@ -1,6 +1,6 @@
 import { useDragLayer, XYCoord } from "react-dnd";
 import styled from "styled-components";
-import { Task as TaskModel } from "../model/task";
+import { TaskViewModel } from "../model/viewModels";
 import Card from "./Card";
 import Task from "./Task";
 
@@ -21,10 +21,7 @@ const PreviewCard = styled(Card)`
 
 interface DragLayerProps {}
 
-function getItemStyles(
-  initialOffset: XYCoord | null,
-  currentOffset: XYCoord | null
-) {
+function getItemStyles(initialOffset: XYCoord | null, currentOffset: XYCoord | null) {
   if (!initialOffset || !currentOffset) {
     return {
       display: "none",
@@ -40,19 +37,18 @@ function getItemStyles(
 }
 
 const DragLayer: React.FC<DragLayerProps> = () => {
-  const { itemType, isDragging, item, initialOffset, currentOffset } =
-    useDragLayer((monitor) => ({
-      item: monitor.getItem(),
-      itemType: monitor.getItemType(),
-      initialOffset: monitor.getInitialSourceClientOffset(),
-      currentOffset: monitor.getSourceClientOffset(),
-      isDragging: monitor.isDragging(),
-    }));
+  const { itemType, isDragging, item, initialOffset, currentOffset } = useDragLayer((monitor) => ({
+    item: monitor.getItem(),
+    itemType: monitor.getItemType(),
+    initialOffset: monitor.getInitialSourceClientOffset(),
+    currentOffset: monitor.getSourceClientOffset(),
+    isDragging: monitor.isDragging(),
+  }));
 
   function renderItem() {
     switch (itemType) {
       case "task":
-        const task = item.task as TaskModel;
+        const task = item as TaskViewModel;
         return (
           <PreviewCard>
             <Task task={task} />
@@ -69,9 +65,7 @@ const DragLayer: React.FC<DragLayerProps> = () => {
 
   return (
     <Layer>
-      <div style={getItemStyles(initialOffset, currentOffset)}>
-        {renderItem()}
-      </div>
+      <div style={getItemStyles(initialOffset, currentOffset)}>{renderItem()}</div>
     </Layer>
   );
 };

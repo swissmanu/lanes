@@ -6,5 +6,6 @@ const Card = styled.div<{ dragging?: boolean }>`
   background-color: ${({ dragging }) => (dragging ? "#E1E3E7" : "white")};
   color: ${({ dragging }) => (dragging ? "#E1E3E7" : "black")};
   box-shadow: ${({ dragging }) => (dragging ? null : "0 1px 0 #091e4240")};
+  cursor: pointer;
 `;
 export default Card;

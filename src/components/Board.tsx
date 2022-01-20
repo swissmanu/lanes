@@ -3,7 +3,9 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import styled from "styled-components";
 import { Board as BoardModel } from "../model/board";
-import { Lane as LaneModel } from "../model/lane";
+import getViewModelFromBoard from "../model/viewModels/getViewModelFromBoard";
+import moveCard from "../model/viewModels/moveCard";
+import { Tail } from "../util/tail";
 import DragLayer from "./DragLayer";
 import Lane from "./Lane";
 
@@ -30,18 +32,16 @@ interface BoardProps {
 }
 
 const Board: React.FC<BoardProps> = ({ board, onChange }) => {
-  const createOnChangeLane = React.useCallback(
-    (index: number) => (lane: LaneModel) => {
-      onChange({
-        ...board,
-        lanes: [
-          ...board.lanes.slice(0, index),
-          lane,
-          ...board.lanes.slice(index + 1),
-        ],
-      });
+  const { tasks, lanes } = React.useMemo(() => getViewModelFromBoard(board), [board]);
+
+  const [tasksState, setTasksState] = React.useState(tasks);
+  React.useEffect(() => setTasksState(tasks), [tasks]);
+
+  const onMoveCard = React.useCallback(
+    (...args: Tail<Parameters<typeof moveCard>>) => {
+      setTasksState(moveCard(tasksState, ...args));
     },
-    [board, onChange]
+    [tasksState]
   );
 
   return (
@@ -50,9 +50,14 @@ const Board: React.FC<BoardProps> = ({ board, onChange }) => {
       <DndProvider backend={HTML5Backend}>
         <DragLayer />
         <Lanes>
-          {board.lanes.map((lane, i) => (
+          {lanes.map((lane) => (
             <div key={lane.id}>
-              <Lane lane={lane} onChange={createOnChangeLane(i)} />
+              <Lane
+                lane={lane}
+                tasks={tasksState.filter((t) => t.laneId === lane.id) /* TODO Do this better*/}
+                onChange={() => {}}
+                onMoveCard={onMoveCard}
+              />
             </div>
           ))}
         </Lanes>

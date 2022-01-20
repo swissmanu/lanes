@@ -1,27 +1,21 @@
 import React from "react";
-import { useDrag, useDrop, XYCoord } from "react-dnd";
+import { useDrag, useDrop } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
 import { Task as TaskModel } from "../model/task";
-import {
-  TaskDragAndDropItem,
-  TaskDragAndDropResult,
-} from "../model/taskDragAndDrop";
+import { TaskDragAndDropResult } from "../model/taskDragAndDrop";
+import { TaskViewModel } from "../model/viewModels";
+import moveCard from "../model/viewModels/moveCard";
+import { Tail } from "../util/tail";
 import Card from "./Card";
 import Task from "./Task";
 
 interface TaskProps {
-  task: TaskModel;
-  index: number;
+  task: TaskViewModel;
   onChange: (task: TaskModel) => void;
-  onMove: (fromIndex: number, toIndex: number) => void;
+  onMove: (...x: Tail<Parameters<typeof moveCard>>) => void;
 }
 
-const DraggableTask: React.FC<TaskProps> = ({
-  task,
-  index,
-  onChange,
-  onMove,
-}) => {
+const DraggableTask: React.FC<TaskProps> = ({ task, onChange, onMove }) => {
   const ref = React.useRef<HTMLDivElement>(null);
 
   const onChangeTitle = React.useCallback(
@@ -31,75 +25,32 @@ const DraggableTask: React.FC<TaskProps> = ({
     [onChange, task]
   );
 
-  const [{ dragging }, drag, preview] = useDrag<
-    TaskDragAndDropItem,
-    unknown,
-    { dragging: boolean }
-  >(
+  const [{ dragging }, drag, preview] = useDrag<TaskViewModel, unknown, { dragging: boolean }>(
     () => ({
       type: "task",
-      item: { task, index },
-      collect: (monitor) => ({ dragging: monitor.isDragging() }),
+      item: task,
+      collect: (monitor) => ({
+        dragging: monitor.getItem()?.id === task.id,
+      }),
     }),
-    [task, index]
+    [task]
   );
 
-  const [, drop] = useDrop<TaskDragAndDropItem, TaskDragAndDropResult, unknown>(
+  const [, drop] = useDrop<TaskViewModel, TaskDragAndDropResult, unknown>(
     {
       accept: "task",
-      drop: () => ({ dropHandled: true }),
-      hover: (item, monitor) => {
+      drop: () => {
+        return { dropHandled: true };
+      },
+      hover: (item) => {
         if (!ref.current) {
           return;
         }
-
-        const dragIndex = item.index;
-        const hoverIndex = index;
-
-        // Dont replace task with themselves
-        if (dragIndex === hoverIndex) {
-          return;
-        }
-
-        // Determine rectangle on screen
-        const hoverBoundingRect = ref.current?.getBoundingClientRect();
-
-        // Get vertical middle
-        const hoverMiddleY =
-          (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-
-        // Determine mouse position
-        const clientOffset = monitor.getClientOffset();
-
-        // Get pixels to the top
-        const hoverClientY =
-          (clientOffset as XYCoord).y - hoverBoundingRect.top;
-
-        // Only perform the move when the mouse has crossed half of the items height
-        // When dragging downwards, only move when the cursor is below 50%
-        // When dragging upwards, only move when the cursor is above 50%
-
-        // Dragging downwards
-        if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-          return;
-        }
-
-        // Dragging upwards
-        if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-          return;
-        }
-
-        // Time to actually perform the action
-        onMove(dragIndex, hoverIndex);
-
-        // Note: we're mutating the monitor item here!
-        // Generally it's better to avoid mutations,
-        // but it's good here for the sake of performance
-        // to avoid expensive index searches.
-        item.index = hoverIndex;
+        const hoverIndex = task.index;
+        onMove(item.id, hoverIndex, task.laneId);
       },
     },
-    [onMove, index]
+    [onMove, task]
   );
 
   React.useEffect(() => {
