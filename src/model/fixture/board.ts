@@ -25,6 +25,7 @@ const boardFixture: Board = {
         },
       ],
     },
+    { id: "l3", title: "Lane 3", tasks: [] },
   ],
 };
 export default boardFixture;

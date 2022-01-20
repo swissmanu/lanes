@@ -1,4 +1,5 @@
 import React from "react";
+import { useDrop } from "react-dnd";
 import styled from "styled-components";
 import { Lane as LaneModel } from "../model/lane";
 import { LaneViewModel, TaskViewModel } from "../model/viewModels";
@@ -43,9 +44,22 @@ const Lane: React.FC<LaneProps> = ({ lane, tasks, onChange, onMoveCard }) => {
   //   },
   //   [lane, onChange]
   // );
-
+  const ref = React.useRef<HTMLDivElement>(null);
+  const [, drop] = useDrop<TaskViewModel, unknown, unknown>(
+    {
+      accept: "task",
+      canDrop: () => tasks.length === 0,
+      hover: (item, monitor) => {
+        if (monitor.isOver({ shallow: true }) && monitor.canDrop()) {
+          onMoveCard(item.id, 0, lane.id);
+        }
+      },
+    },
+    [onMoveCard, tasks, lane.id]
+  );
+  drop(ref);
   return (
-    <LaneContainer>
+    <LaneContainer ref={ref}>
       <Title>{lane.title}</Title>
       <Tasks>
         {tasks.map((task, i) => (
