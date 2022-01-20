@@ -57,6 +57,9 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.0.0-beta.10",
-    "@types/styled-components": "^5.1.19"
+    "@types/styled-components": "^5.1.19",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.2.2",
+    "prettier": "^2.5.1"
   }
 }
