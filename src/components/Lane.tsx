@@ -13,7 +13,7 @@ const LaneContainer = styled.div`
 `;
 
 const Title = styled.h2`
-  padding: 10px 8px;
+  padding: 10px 16px;
   font-weight: 600;
 `;
 
