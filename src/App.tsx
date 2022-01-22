@@ -1,9 +1,10 @@
 import React from "react";
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { Reset } from "styled-reset";
 import Board from "./components/Board";
 import boardFixture from "./model/fixture/board";
 import getViewModelFromBoard from "./model/viewModels/getViewModelFromBoard";
+import blue from "./theme/blue";
 
 function App() {
   const [boardViewModel, setBoardViewModel] = React.useState(getViewModelFromBoard(boardFixture));
@@ -11,8 +12,10 @@ function App() {
   return (
     <>
       <Reset />
-      <GlobalStyles />
-      <Board board={boardViewModel} onChange={setBoardViewModel} />
+      <ThemeProvider theme={blue}>
+        <GlobalStyles />
+        <Board board={boardViewModel} onChange={setBoardViewModel} />
+      </ThemeProvider>
     </>
   );
 }
@@ -21,7 +24,7 @@ export default App;
 
 const GlobalStyles = createGlobalStyle`
 body {
-  background: #0079BF;
+  background: ${(props) => props.theme.board.background};
   font-family: 'Helvetica Neue', 'Arial Nova', Helvetica, Arial, sans-serif;
 }
 `;

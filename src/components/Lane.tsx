@@ -8,7 +8,7 @@ import { Tail } from "../util/tail";
 import DraggableTask from "./DraggableTask";
 
 const LaneContainer = styled.div`
-  background-color: #ebecf0;
+  background-color: ${(props) => props.theme.lane.background};
   border-radius: 3px;
 `;
 
