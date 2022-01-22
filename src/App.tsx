@@ -24,7 +24,12 @@ export default App;
 
 const GlobalStyles = createGlobalStyle`
 body {
+  height: 100vh;
   background: ${(props) => props.theme.board.background};
   font-family: 'Helvetica Neue', 'Arial Nova', Helvetica, Arial, sans-serif;
+}
+
+#root {
+  height: 100%;
 }
 `;

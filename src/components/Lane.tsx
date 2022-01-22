@@ -8,13 +8,20 @@ import { Tail } from "../util/tail";
 import DraggableTask from "./DraggableTask";
 
 const LaneContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   background-color: ${(props) => props.theme.lane.background};
   border-radius: 3px;
+  max-height: 100%;
 `;
 
 const Title = styled.h2`
   padding: 10px 16px;
   font-weight: 600;
+`;
+
+const Content = styled.div`
+  overflow-y: scroll;
 `;
 
 const Tasks = styled.div`
@@ -62,12 +69,14 @@ const Lane: React.FC<LaneProps> = ({ lane, tasks, onChange, onMoveCard }) => {
   return (
     <LaneContainer ref={ref}>
       <Title>{lane.title}</Title>
-      <Tasks>
-        {tasks.map((task, i) => (
-          <DraggableTask key={task.id} task={task} onChange={() => {}} onMove={onMoveCard} />
-        ))}
-      </Tasks>
-      <Footer />
+      <Content>
+        <Tasks>
+          {tasks.map((task, i) => (
+            <DraggableTask key={task.id} task={task} onChange={() => {}} onMove={onMoveCard} />
+          ))}
+        </Tasks>
+        <Footer />
+      </Content>
     </LaneContainer>
   );
 };

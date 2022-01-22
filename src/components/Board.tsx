@@ -9,6 +9,12 @@ import DragLayer from "./DragLayer";
 import Lane from "./Lane";
 
 const BoardContainer = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Header = styled.header`
   padding: 16px;
 `;
 
@@ -39,9 +45,15 @@ const TitleEditor = styled.textarea`
 `;
 
 const Lanes = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 270px);
+  flex: 1;
+  display: flex;
   gap: 8px;
+  overflow-x: scroll;
+  padding: 16px;
+`;
+const LaneContainer = styled.div`
+  flex: 0 0 270px;
+  max-height: 100%;
 `;
 
 interface BoardProps {
@@ -60,22 +72,24 @@ const Board: React.FC<BoardProps> = ({ board: { lanes, tasks, title }, onChange 
 
   return (
     <BoardContainer>
-      <HiddenTitle>{title}</HiddenTitle>
-      <TitleEditor autoCorrect="off" spellCheck="false" autoComplete="off">
-        {title}
-      </TitleEditor>
+      <Header>
+        <HiddenTitle>{title}</HiddenTitle>
+        <TitleEditor autoCorrect="off" spellCheck="false" autoComplete="off">
+          {title}
+        </TitleEditor>
+      </Header>
       <DndProvider backend={HTML5Backend}>
         <DragLayer />
         <Lanes>
           {lanes.map((lane) => (
-            <div key={lane.id}>
+            <LaneContainer key={lane.id}>
               <Lane
                 lane={lane}
                 tasks={tasks.filter((t) => t.laneId === lane.id) /* TODO Do this better*/}
                 onChange={() => {}}
                 onMoveCard={onMoveCard}
               />
-            </div>
+            </LaneContainer>
           ))}
         </Lanes>
       </DndProvider>
