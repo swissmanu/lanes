@@ -1,11 +1,11 @@
 import React from "react";
 import { useDrop } from "react-dnd";
 import styled from "styled-components";
-import { Lane as LaneModel } from "../model/lane";
 import { LaneViewModel, TaskViewModel } from "../model/viewModels";
 import moveCard from "../model/viewModels/moveCard";
 import { Tail } from "../util/tail";
 import DraggableTask from "./DraggableTask";
+import TextEditor from "./TextEditor";
 
 const LaneContainer = styled.div`
   display: flex;
@@ -15,7 +15,12 @@ const LaneContainer = styled.div`
   max-height: 100%;
 `;
 
-const Title = styled.h2`
+const HiddenTitle = styled.h2`
+  display: none;
+  padding: 10px 16px;
+  font-weight: 600;
+`;
+const TitleEditor = styled(TextEditor)`
   padding: 10px 16px;
   font-weight: 600;
 `;
@@ -38,7 +43,7 @@ const Footer = styled.div`
 interface LaneProps {
   lane: LaneViewModel;
   tasks: ReadonlyArray<TaskViewModel>;
-  onChange: (lane: LaneModel) => void;
+  onChange: (lane: LaneViewModel) => void;
   onMoveCard: (...x: Tail<Parameters<typeof moveCard>>) => void;
 }
 
@@ -53,6 +58,16 @@ const Lane: React.FC<LaneProps> = ({ lane, tasks, onChange, onMoveCard }) => {
   //   [lane, onChange]
   // );
   const ref = React.useRef<HTMLDivElement>(null);
+
+  const onChangeLaneTitle = React.useCallback(
+    (title: string) => {
+      if (title !== lane.title) {
+        onChange({ ...lane, title });
+      }
+    },
+    [lane, onChange]
+  );
+
   const [, drop] = useDrop<TaskViewModel, unknown, unknown>(
     {
       accept: "task",
@@ -66,9 +81,11 @@ const Lane: React.FC<LaneProps> = ({ lane, tasks, onChange, onMoveCard }) => {
     [onMoveCard, tasks, lane.id]
   );
   drop(ref);
+
   return (
     <LaneContainer ref={ref}>
-      <Title>{lane.title}</Title>
+      <HiddenTitle>{lane.title}</HiddenTitle>
+      <TitleEditor value={lane.title} onChange={onChangeLaneTitle} inTabOrder />
       <Content>
         <Tasks>
           {tasks.map((task, i) => (

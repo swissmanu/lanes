@@ -3,18 +3,24 @@ import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { Reset } from "styled-reset";
 import Board from "./components/Board";
 import boardFixture from "./model/fixture/board";
+import { BoardViewModel } from "./model/viewModels";
 import getViewModelFromBoard from "./model/viewModels/getViewModelFromBoard";
 import blue from "./theme/blue";
 
 function App() {
   const [boardViewModel, setBoardViewModel] = React.useState(getViewModelFromBoard(boardFixture));
 
+  const onChangeBoardViewModel = React.useCallback((boardViewModel: BoardViewModel) => {
+    console.log(boardViewModel);
+    setBoardViewModel(boardViewModel);
+  }, []);
+
   return (
     <>
       <Reset />
       <ThemeProvider theme={blue}>
         <GlobalStyles />
-        <Board board={boardViewModel} onChange={setBoardViewModel} />
+        <Board board={boardViewModel} onChange={onChangeBoardViewModel} />
       </ThemeProvider>
     </>
   );
