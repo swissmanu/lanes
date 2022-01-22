@@ -12,11 +12,30 @@ const BoardContainer = styled.div`
   padding: 16px;
 `;
 
-const Title = styled.h1`
+const HiddenTitle = styled.h1`
+  display: none;
   font-size: 24px;
   font-weight: 600;
   margin: 24px 0px 16px 0px;
   color: white;
+`;
+
+const TitleEditor = styled.textarea`
+  background: none;
+  border: none;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 24px 0px 16px 0px;
+  resize: none;
+  color: white;
+  font-family: inherit;
+  cursor: pointer;
+
+  &:focus {
+    color: black;
+    background: white;
+    cursor: unset;
+  }
 `;
 
 const Lanes = styled.div`
@@ -41,7 +60,10 @@ const Board: React.FC<BoardProps> = ({ board: { lanes, tasks, title }, onChange 
 
   return (
     <BoardContainer>
-      <Title>{title}</Title>
+      <HiddenTitle>{title}</HiddenTitle>
+      <TitleEditor autoCorrect="off" spellCheck="false" autoComplete="off">
+        {title}
+      </TitleEditor>
       <DndProvider backend={HTML5Backend}>
         <DragLayer />
         <Lanes>
