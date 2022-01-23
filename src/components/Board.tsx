@@ -16,22 +16,17 @@ const BoardContainer = styled.div`
 `;
 
 const Header = styled.header`
-  padding: 16px;
+  padding: 0px 14px;
+  margin: 32px 0px 16px 0px;
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
 `;
-
 const HiddenTitle = styled.h1`
   display: none;
-  font-size: 24px;
-  font-weight: 600;
-  margin: 24px 0px 16px 0px;
-  color: white;
 `;
-
 const TitleEditor = styled(TextEditor)`
-  color: white;
-  font-size: 24px;
-  font-weight: 600;
-  margin: 24px 0px 16px 0px;
+  min-height: 26px;
 `;
 
 const Lanes = styled.div`
@@ -39,9 +34,8 @@ const Lanes = styled.div`
   display: flex;
   gap: 8px;
   overflow-x: scroll;
-  padding: 16px;
+  padding: 0 16px 16px 16px;
 `;
-
 const LaneContainer = styled.div`
   flex: 0 0 270px;
   max-height: 100%;

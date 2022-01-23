@@ -18,8 +18,8 @@ const Textarea = styled(AutoHeightTextarea)`
   font-family: inherit;
   font-weight: inherit;
   font-size: inherit;
-  line-height: inherit;
   cursor: pointer;
+  padding: 1px 2px;
 
   &:focus {
     color: black;

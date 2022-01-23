@@ -15,14 +15,16 @@ const LaneContainer = styled.div`
   max-height: 100%;
 `;
 
-const HiddenTitle = styled.h2`
-  display: none;
-  padding: 10px 16px;
+const Header = styled.header`
+  padding: 10px 14px;
   font-weight: 600;
 `;
+const HiddenTitle = styled.h2`
+  display: none;
+`;
 const TitleEditor = styled(TextEditor)`
-  padding: 10px 16px;
-  font-weight: 600;
+  width: 100%;
+  min-height: 17px;
 `;
 
 const Content = styled.div`
@@ -84,8 +86,10 @@ const Lane: React.FC<LaneProps> = ({ lane, tasks, onChange, onMoveCard }) => {
 
   return (
     <LaneContainer ref={ref}>
-      <HiddenTitle>{lane.title}</HiddenTitle>
-      <TitleEditor value={lane.title} onChange={onChangeLaneTitle} inTabOrder />
+      <Header>
+        <HiddenTitle>{lane.title}</HiddenTitle>
+        <TitleEditor value={lane.title} onChange={onChangeLaneTitle} inTabOrder />
+      </Header>
       <Content>
         <Tasks>
           {tasks.map((task, i) => (
