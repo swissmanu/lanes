@@ -1,18 +1,24 @@
 import React from "react";
 import styled from "styled-components";
+import AutoHeightTextarea from "./AutoHeightTextarea";
 
 interface TextEditorProps {
   className?: string;
   value: string;
   inTabOrder?: boolean;
+  allowInputLineBreak?: boolean;
   onChange: (value: string) => void;
 }
 
-const Textarea = styled.textarea`
+const Textarea = styled(AutoHeightTextarea)`
   background: none;
+  color: inherit;
   border: none;
   resize: none;
   font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+  line-height: inherit;
   cursor: pointer;
 
   &:focus {
@@ -22,7 +28,13 @@ const Textarea = styled.textarea`
   }
 `;
 
-const TextEditor: React.FC<TextEditorProps> = ({ value: initialValue, className, onChange, inTabOrder = false }) => {
+const TextEditor: React.FC<TextEditorProps> = ({
+  value: initialValue,
+  className,
+  onChange,
+  inTabOrder = false,
+  allowInputLineBreak = false,
+}) => {
   const ref = React.useRef<HTMLTextAreaElement>(null);
   const [value, setValue] = React.useState(initialValue);
 
@@ -49,9 +61,11 @@ const TextEditor: React.FC<TextEditorProps> = ({ value: initialValue, className,
         cancel();
       } else if ((e.key === "Enter" && !e.shiftKey) || e.key === "Tab") {
         commit();
+      } else if (e.key === "Enter" && e.shiftKey && !allowInputLineBreak) {
+        e.preventDefault();
       }
     },
-    [cancel, commit]
+    [allowInputLineBreak, cancel, commit]
   );
 
   const onFocus = React.useCallback(() => {
