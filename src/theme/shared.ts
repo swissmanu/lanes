@@ -2,7 +2,12 @@ import { DefaultTheme } from "styled-components";
 
 const sharedTheme: Omit<DefaultTheme, "board"> = {
   lane: {
-    background: "#ebecf0",
+    background: "rgb(235, 236, 240)",
+  },
+  createLane: {
+    background: "rgba(235, 236, 240, .5)",
+    placeholderColor: "white",
+    focusedPlaceholderColor: "black",
   },
   card: {
     background: "white",

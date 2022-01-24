@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { BoardViewModel, LaneViewModel } from "../model/viewModels";
 import moveCard from "../model/viewModels/moveCard";
 import { Tail } from "../util/tail";
+import CreateLane from "./CreateLane";
 import DragLayer from "./DragLayer";
 import Lane from "./Lane";
 import TextEditor from "./TextEditor";
@@ -67,6 +68,17 @@ const Board: React.FC<BoardProps> = ({ board: { lanes, tasks, title }, onChange 
     [lanes, onChange, tasks, title]
   );
 
+  const onCreateLane = React.useCallback(
+    (title: string) => {
+      onChange({
+        title,
+        tasks,
+        lanes: [...lanes, { id: `l${lanes.length + 1}`, title }],
+      });
+    },
+    [lanes, onChange, tasks]
+  );
+
   const onMoveCard = React.useCallback(
     (...args: Tail<Parameters<typeof moveCard>>) => {
       const nextTasks = moveCard(tasks, ...args);
@@ -96,6 +108,9 @@ const Board: React.FC<BoardProps> = ({ board: { lanes, tasks, title }, onChange 
               />
             </LaneContainer>
           ))}
+          <LaneContainer>
+            <CreateLane onCreate={onCreateLane} />
+          </LaneContainer>
         </Lanes>
       </DndProvider>
     </BoardContainer>

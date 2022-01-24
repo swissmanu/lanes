@@ -5,6 +5,7 @@ import AutoHeightTextarea from "./AutoHeightTextarea";
 interface TextEditorProps {
   className?: string;
   value: string;
+  placeholder?: string;
   inTabOrder?: boolean;
   allowInputLineBreak?: boolean;
   onChange: (value: string) => void;
@@ -28,65 +29,67 @@ const Textarea = styled(AutoHeightTextarea)`
   }
 `;
 
-const TextEditor: React.FC<TextEditorProps> = ({
-  value: initialValue,
-  className,
-  onChange,
-  inTabOrder = false,
-  allowInputLineBreak = false,
-}) => {
-  const ref = React.useRef<HTMLTextAreaElement>(null);
-  const [value, setValue] = React.useState(initialValue);
+const TextEditor = React.forwardRef<HTMLTextAreaElement, TextEditorProps>(
+  (
+    { value: initialValue, className, placeholder, onChange, inTabOrder = false, allowInputLineBreak = false },
+    forwardedRef
+  ) => {
+    const ref = React.useRef<HTMLTextAreaElement>(null);
+    React.useImperativeHandle(forwardedRef, () => ref.current!);
 
-  React.useEffect(() => setValue(initialValue), [initialValue]);
+    const [value, setValue] = React.useState(initialValue);
 
-  const commit = React.useCallback(() => {
-    ref.current?.blur();
-    onChange(value);
-  }, [onChange, value]);
+    React.useEffect(() => setValue(initialValue), [initialValue]);
 
-  const cancel = React.useCallback(() => {
-    ref.current?.blur();
-    setValue(initialValue);
-  }, [initialValue]);
+    const commit = React.useCallback(() => {
+      ref.current?.blur();
+      onChange(value);
+    }, [onChange, value]);
 
-  const onChangeTextarea = React.useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const v = e.target.value ?? "";
-    setValue(v);
-  }, []);
+    const cancel = React.useCallback(() => {
+      ref.current?.blur();
+      setValue(initialValue);
+    }, [initialValue]);
 
-  const onKeyDown = React.useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "Escape") {
-        cancel();
-      } else if ((e.key === "Enter" && !e.shiftKey) || e.key === "Tab") {
-        commit();
-      } else if (e.key === "Enter" && e.shiftKey && !allowInputLineBreak) {
-        e.preventDefault();
+    const onChangeTextarea = React.useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const v = e.target.value ?? "";
+      setValue(v);
+    }, []);
+
+    const onKeyDown = React.useCallback(
+      (e: React.KeyboardEvent) => {
+        if (e.key === "Escape") {
+          cancel();
+        } else if ((e.key === "Enter" && !e.shiftKey) || e.key === "Tab") {
+          commit();
+        } else if (e.key === "Enter" && e.shiftKey && !allowInputLineBreak) {
+          e.preventDefault();
+        }
+      },
+      [allowInputLineBreak, cancel, commit]
+    );
+
+    const onFocus = React.useCallback(() => {
+      if (ref.current) {
+        ref.current.select();
       }
-    },
-    [allowInputLineBreak, cancel, commit]
-  );
+    }, []);
 
-  const onFocus = React.useCallback(() => {
-    if (ref.current) {
-      ref.current.select();
-    }
-  }, []);
-
-  return (
-    <Textarea
-      ref={ref}
-      className={className}
-      value={value}
-      tabIndex={!inTabOrder ? -1 : undefined}
-      autoCorrect="off"
-      spellCheck="false"
-      autoComplete="off"
-      onChange={onChangeTextarea}
-      onKeyDown={onKeyDown}
-      onFocus={onFocus}
-    />
-  );
-};
+    return (
+      <Textarea
+        ref={ref}
+        className={className}
+        value={value}
+        tabIndex={!inTabOrder ? -1 : undefined}
+        autoCorrect="off"
+        spellCheck="false"
+        autoComplete="off"
+        placeholder={placeholder}
+        onChange={onChangeTextarea}
+        onKeyDown={onKeyDown}
+        onFocus={onFocus}
+      />
+    );
+  }
+);
 export default TextEditor;

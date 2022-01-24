@@ -9,6 +9,11 @@ declare module "styled-components" {
     lane: {
       background: string;
     };
+    createLane: {
+      background: string;
+      placeholderColor: string;
+      focusedPlaceholderColor: string;
+    };
 
     card: {
       background: string;
