@@ -14,6 +14,7 @@ const BoardContainer = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+  background: ${({ theme }) => theme.board.background};
 `;
 
 const Header = styled.header`
