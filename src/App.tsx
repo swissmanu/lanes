@@ -1,20 +1,42 @@
+import { readTextFile } from "@tauri-apps/api/fs";
 import React from "react";
+import remarkParse from "remark-parse";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { Reset } from "styled-reset";
+import { unified } from "unified";
 import Board from "./components/Board";
-import boardFixture from "./model/fixture/board";
 import Intro from "./components/Intro";
+import useFrontendEvent from "./hooks/useFrontendEvent";
+import decodeMarkdown from "./io/md/decode";
 import { BoardViewModel } from "./model/viewModels";
 import getViewModelFromBoard from "./model/viewModels/getViewModelFromBoard";
+import { FrontendEventPayloads, NewFrontendEventName, OpenFrontendEventName } from "./tauri/frontendEvents";
 import blue from "./theme/blue";
 
 function App() {
   const [boardViewModel, setBoardViewModel] = React.useState<BoardViewModel | null>(null);
 
   const onChangeBoardViewModel = React.useCallback((boardViewModel: BoardViewModel) => {
-    console.log(boardViewModel);
     setBoardViewModel(boardViewModel);
   }, []);
+
+  const onOpenFrontendEvent = React.useCallback(
+    async ({ path }: FrontendEventPayloads[typeof OpenFrontendEventName]) => {
+      const content = await readTextFile(path);
+      const ast = unified().use(remarkParse).parse(content);
+      const board = decodeMarkdown(ast);
+      const viewModel = getViewModelFromBoard(board);
+      setBoardViewModel(viewModel);
+    },
+    []
+  );
+
+  const onNewFrontendEvent = React.useCallback(() => {
+    setBoardViewModel({ lanes: [], tasks: [], title: "New Board" });
+  }, []);
+
+  useFrontendEvent(OpenFrontendEventName, onOpenFrontendEvent);
+  useFrontendEvent(NewFrontendEventName, onNewFrontendEvent);
 
   return (
     <>
