@@ -47,62 +47,60 @@ interface BoardProps {
   onChange: (board: BoardViewModel) => void;
 }
 
-const Board: React.FC<BoardProps> = ({ board: { lanes, tasks, title }, onChange }) => {
+const Board: React.FC<BoardProps> = ({ board, onChange }) => {
   const onChangeBoardTitle = React.useCallback(
     (t: string) => {
-      if (t !== title) {
-        onChange({ title: t, tasks, lanes });
+      if (t !== board.title) {
+        onChange({ ...board, title: t });
       }
     },
-    [lanes, onChange, tasks, title]
+    [board, onChange]
   );
 
   const onChangeLane = React.useCallback(
     (lane: LaneViewModel) => {
       onChange({
-        title,
-        tasks,
-        lanes: lanes.map((l) => (lane.id === l.id ? lane : l)),
+        ...board,
+        lanes: board.lanes.map((l) => (lane.id === l.id ? lane : l)),
       });
     },
-    [lanes, onChange, tasks, title]
+    [board, onChange]
   );
 
   const onCreateLane = React.useCallback(
     (title: string) => {
       onChange({
-        title,
-        tasks,
-        lanes: [...lanes, { id: `l${lanes.length + 1}`, title }],
+        ...board,
+        lanes: [...board.lanes, { id: `l${board.lanes.length + 1}`, title }],
       });
     },
-    [lanes, onChange, tasks]
+    [board, onChange]
   );
 
   const onMoveCard = React.useCallback(
     (...args: Tail<Parameters<typeof moveCard>>) => {
-      const nextTasks = moveCard(tasks, ...args);
-      if (nextTasks !== tasks) {
-        onChange({ lanes, tasks: nextTasks, title });
+      const nextTasks = moveCard(board.tasks, ...args);
+      if (nextTasks !== board.tasks) {
+        onChange({ ...board, tasks: nextTasks });
       }
     },
-    [lanes, onChange, tasks, title]
+    [board, onChange]
   );
 
   return (
     <BoardContainer>
       <Header>
-        <HiddenTitle>{title}</HiddenTitle>
-        <TitleEditor value={title} onChange={onChangeBoardTitle} />
+        <HiddenTitle>{board.title}</HiddenTitle>
+        <TitleEditor value={board.title} onChange={onChangeBoardTitle} />
       </Header>
       <DndProvider backend={HTML5Backend}>
         <DragLayer />
         <Lanes>
-          {lanes.map((lane) => (
+          {board.lanes.map((lane) => (
             <LaneContainer key={lane.id}>
               <Lane
                 lane={lane}
-                tasks={tasks.filter((t) => t.laneId === lane.id) /* TODO Do this better*/}
+                tasks={board.tasks.filter((t) => t.laneId === lane.id) /* TODO Do this better*/}
                 onChange={onChangeLane}
                 onMoveCard={onMoveCard}
               />

@@ -1,4 +1,4 @@
-import { readTextFile } from "@tauri-apps/api/fs";
+import { FsTextFileOption, readTextFile, writeFile } from "@tauri-apps/api/fs";
 import React from "react";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { Reset } from "styled-reset";
@@ -6,7 +6,9 @@ import Board from "./components/Board";
 import Intro from "./components/Intro";
 import useFrontendEvent from "./hooks/useFrontendEvent";
 import decodeMarkdown from "./io/md/decode";
+import encodeMarkdown from "./io/md/encode";
 import { BoardViewModel } from "./model/viewModels";
+import getBoardFromViewModel from "./model/viewModels/getBoardFromViewModel";
 import getViewModelFromBoard from "./model/viewModels/getViewModelFromBoard";
 import { FrontendEventPayloads, NewFrontendEventName, OpenFrontendEventName } from "./tauri/frontendEvents";
 import blue from "./theme/blue";
@@ -14,15 +16,22 @@ import blue from "./theme/blue";
 function App() {
   const [boardViewModel, setBoardViewModel] = React.useState<BoardViewModel | null>(null);
 
-  const onChangeBoardViewModel = React.useCallback((boardViewModel: BoardViewModel) => {
+  const onChangeBoardViewModel = React.useCallback(async (boardViewModel: BoardViewModel) => {
     setBoardViewModel(boardViewModel);
+
+    if (boardViewModel.filePath) {
+      const board = getBoardFromViewModel(boardViewModel);
+      const markdownString = encodeMarkdown(board);
+      const textFileOptions: FsTextFileOption = { path: boardViewModel.filePath, contents: markdownString };
+      await writeFile(textFileOptions);
+    }
   }, []);
 
   const onOpenFrontendEvent = React.useCallback(
     async ({ path }: FrontendEventPayloads[typeof OpenFrontendEventName]) => {
       const markdownString = await readTextFile(path);
       const board = decodeMarkdown(markdownString);
-      const viewModel = getViewModelFromBoard(board);
+      const viewModel = getViewModelFromBoard(board, path);
       setBoardViewModel(viewModel);
     },
     []
