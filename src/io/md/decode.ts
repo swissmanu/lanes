@@ -1,15 +1,17 @@
-import { Root } from "mdast";
+import { toMarkdown } from "mdast-util-to-markdown";
+import remarkParse from "remark-parse";
+import { unified } from "unified";
 import { Lane } from "../../model/lane";
 import { Task } from "../../model/task";
 import { Decoder } from "../io";
-import { toMarkdown } from "mdast-util-to-markdown";
-import { root } from "mdast-builder";
 
-const decodeMarkdown: Decoder<Root> = (ast) => {
+const decodeMarkdown: Decoder<string> = (markdownString) => {
   let boardTitle = "";
   const lanes: Lane[] = [];
   let laneId = 0;
   let taskId = 0;
+
+  const ast = unified().use(remarkParse).parse(markdownString);
 
   for (const node of ast.children) {
     if (node.type === "heading") {

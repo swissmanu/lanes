@@ -1,9 +1,7 @@
 import { readTextFile } from "@tauri-apps/api/fs";
 import React from "react";
-import remarkParse from "remark-parse";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { Reset } from "styled-reset";
-import { unified } from "unified";
 import Board from "./components/Board";
 import Intro from "./components/Intro";
 import useFrontendEvent from "./hooks/useFrontendEvent";
@@ -22,9 +20,8 @@ function App() {
 
   const onOpenFrontendEvent = React.useCallback(
     async ({ path }: FrontendEventPayloads[typeof OpenFrontendEventName]) => {
-      const content = await readTextFile(path);
-      const ast = unified().use(remarkParse).parse(content);
-      const board = decodeMarkdown(ast);
+      const markdownString = await readTextFile(path);
+      const board = decodeMarkdown(markdownString);
       const viewModel = getViewModelFromBoard(board);
       setBoardViewModel(viewModel);
     },
