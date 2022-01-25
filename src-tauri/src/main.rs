@@ -3,8 +3,69 @@
   windows_subsystem = "windows"
 )]
 
+use tauri::api::dialog;
+use tauri::{CustomMenuItem, Menu, MenuItem, Submenu, WindowUrl};
+
+#[derive(Clone, serde::Serialize)]
+struct OpenPayload {
+  path: String,
+}
+
 fn main() {
+  let new = CustomMenuItem::new("new".to_string(), "New Board").accelerator("Cmd+N");
+  let new_window =
+    CustomMenuItem::new("newWindow".to_string(), "New Window").accelerator("Cmd+Shift+N");
+  let open = CustomMenuItem::new("open".to_string(), "Open").accelerator("Cmd+O");
+
+  let file_menu = Submenu::new(
+    "File",
+    Menu::new()
+      .add_item(new)
+      .add_item(new_window)
+      .add_native_item(MenuItem::Separator)
+      .add_item(open)
+      .add_native_item(MenuItem::CloseWindow)
+      .add_native_item(MenuItem::Separator)
+      .add_native_item(MenuItem::Quit),
+  );
+  let menu = Menu::new().add_submenu(file_menu);
+
   tauri::Builder::default()
+    .menu(menu)
+    .on_menu_event(|event| match event.menu_item_id() {
+      "new" => {
+        event.window().emit("lanes://frontend/new", {}).unwrap();
+      }
+      "newWindow" => {
+        let mut window = event.window().clone();
+        window
+          .create_window(
+            "test".into(),
+            WindowUrl::App("http://localhost:3000".into()),
+            |builder, attrs| (builder, attrs),
+          )
+          .unwrap();
+      }
+      "open" => {
+        dialog::FileDialogBuilder::default()
+          .add_filter("Markdown", &["md"])
+          .pick_file(move |path_buf| match path_buf {
+            Some(p) => {
+              event
+                .window()
+                .emit(
+                  "lanes://frontend/open",
+                  OpenPayload {
+                    path: p.to_str().unwrap().into(),
+                  },
+                )
+                .unwrap();
+            }
+            _ => {}
+          });
+      }
+      _ => {}
+    })
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
