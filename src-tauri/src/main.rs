@@ -4,7 +4,7 @@
 )]
 
 use tauri::api::dialog;
-use tauri::{CustomMenuItem, Menu, MenuItem, Submenu, WindowUrl};
+use tauri::{CustomMenuItem, Menu, MenuItem, Submenu, WindowBuilder, WindowUrl};
 
 #[derive(Clone, serde::Serialize)]
 struct OpenPayload {
@@ -12,26 +12,31 @@ struct OpenPayload {
 }
 
 fn main() {
+  // TODO Menus are fine for now... But improve once. Inspiration: https://github.com/probablykasper/tauri-template/blob/14b51d4f8702f5fdcb54cf528bdbf3be61e36372/src-tauri/src/menu.rs
   let new = CustomMenuItem::new("new".to_string(), "New Board").accelerator("Cmd+N");
   let new_window =
     CustomMenuItem::new("newWindow".to_string(), "New Window").accelerator("Cmd+Shift+N");
-  let open = CustomMenuItem::new("open".to_string(), "Open").accelerator("Cmd+O");
+  let open = CustomMenuItem::new("open".to_string(), "Open…").accelerator("Cmd+O");
 
   let file_menu = Submenu::new(
     "File",
     Menu::new()
       .add_item(new)
       .add_item(new_window)
-      .add_native_item(MenuItem::Separator)
       .add_item(open)
-      .add_native_item(MenuItem::CloseWindow)
       .add_native_item(MenuItem::Separator)
-      .add_native_item(MenuItem::Quit),
+      .add_native_item(MenuItem::CloseWindow),
   );
-  let menu = Menu::new().add_submenu(file_menu);
 
   tauri::Builder::default()
-    .menu(menu)
+    .menu(
+      Menu::new()
+        .add_submenu(Submenu::new(
+          "Lanes",
+          Menu::new().add_native_item(MenuItem::Quit),
+        ))
+        .add_submenu(file_menu),
+    )
     .on_menu_event(|event| match event.menu_item_id() {
       "new" => {
         event.window().emit("lanes://frontend/new", {}).unwrap();
