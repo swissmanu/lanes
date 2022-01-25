@@ -29,6 +29,19 @@ fn main() {
   );
 
   tauri::Builder::default()
+    .create_window(
+      "main",
+      WindowUrl::default(),
+      |builder, webview_attributes| {
+        let window = builder
+          .title("Lanes")
+          .resizable(true)
+          .inner_size(800.0, 500.0)
+          .min_inner_size(600.0, 400.0);
+
+        return (window, webview_attributes);
+      },
+    )
     .menu(
       Menu::new()
         .add_submenu(Submenu::new(
