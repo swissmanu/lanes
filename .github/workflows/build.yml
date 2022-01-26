@@ -1,0 +1,68 @@
+name: Build
+env:
+  NODE_VERSION: 14.18.1
+
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  bundle:
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - platform: ubuntu-latest
+            buildFolder: bundle/deb
+            ext: "_amd64.deb"
+            compressed: ""
+          - platform: macos-latest
+            buildFolder: bundle/dmg
+            ext: ".dmg"
+            compressed: ""
+          - platform: windows-latest
+            buildFolder: ""
+            ext: ".x64.msi"
+            compressed: ""
+    steps:
+      - uses: actions/checkout@v2
+      - name: setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: install rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+      - name: install webkit2gtk (ubuntu only)
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y webkit2gtk-4.0
+      - run: cargo install tauri-bundler --force
+      - run: yarn
+      - name: build frontend
+        run: yarn build
+      - name: build backend
+        run: |
+          cd src-tauri && cargo update && cd ../
+          yarn tauri build
+      - name: get version
+        run: echo ::set-env name=PACKAGE_VERSION::$(node -p "require('./package.json').version")
+      - name: add version info for osx files
+        if: matrix.platform == 'macos-latest'
+        working-directory: ${{ format('./src-tauri/target/release/{0}', matrix.buildFolder ) }}
+        run: |
+          mv Lanes.dmg Lanes_${{ env.PACKAGE_VERSION }}.dmg
+      - name: add version info for msi files
+        if: matrix.platform == 'windows-latest'
+        working-directory: ${{ format('./src-tauri/target/release/{0}', matrix.buildFolder ) }}
+        run: |
+          ren Lanes.x64.msi Lanes_${{ env.PACKAGE_VERSION }}.x64.msi
+          # mv Lanes.x64.msi Lanes_${{ env.PACKAGE_VERSION }}.x64.msi
