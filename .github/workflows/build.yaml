@@ -58,6 +58,14 @@ jobs:
         working-directory: src-tauri
       - name: build
         run: yarn tauri build
+        env:
+          CI: true
+          ENABLE_CODE_SIGNING: ${{ secrets.MACOS_SIGN_CERTIFICATE }}
+          APPLE_CERTIFICATE: ${{ secrets.MACOS_SIGN_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_SIGN_CERTIFICATE_PASSPHRASE }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.MACOS_APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.MACOS_APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.MACOS_APPLE_PASSWORD }}
 
       - name: Publish Snapshot Artifact
         uses: actions/upload-artifact@v2
