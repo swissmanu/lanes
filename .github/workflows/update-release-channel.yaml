@@ -1,0 +1,22 @@
+name: Update Release Channel
+
+on:
+  release:
+    types:
+      - "released"
+
+jobs:
+  notify:
+    runs-on: "ubuntu-latest"
+    environment:
+      name: Stable Update Channel
+    steps:
+      - name: Update Stable Release Channel
+        uses: sergeysova/gist-write-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIST_GITHUB_TOKEN }}
+        with:
+          gist_id: dc169b42265a4c7afff60719a369d495
+          file_name: stable.json
+          content: |
+            {"todo": true}
