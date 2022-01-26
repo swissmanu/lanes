@@ -26,8 +26,8 @@ jobs:
             ext: ".dmg"
             compressed: ""
           - platform: windows-latest
-            buildFolder: ""
-            ext: ".x64.msi"
+            buildFolder: "bundle/msi"
+            ext: "_x64.msi"
             compressed: ""
     steps:
       - uses: actions/checkout@v2
@@ -54,12 +54,10 @@ jobs:
           sudo apt-get install -y webkit2gtk-4.0
       - run: cargo install tauri-bundler --force
       - run: yarn
-      - name: build frontend
-        run: yarn build
-      - name: build backend
-        run: |
-          cd src-tauri && cargo update && cd ../
-          yarn tauri build
+      - run: cargo update
+        working-directory: src-tauri
+      - name: build
+        run: yarn tauri build
 
       - name: Publish Snapshot Artifact
         uses: actions/upload-artifact@v2
