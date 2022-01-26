@@ -17,13 +17,6 @@ interface TaskProps {
 const DraggableTask: React.FC<TaskProps> = ({ task, onChange, onMove }) => {
   const ref = React.useRef<HTMLDivElement>(null);
 
-  const onChangeTitle = React.useCallback(
-    (title: string) => {
-      onChange({ ...task, title });
-    },
-    [onChange, task]
-  );
-
   const [{ dragging }, drag, preview] = useDrag<TaskViewModel, unknown, { dragging: boolean }>(
     () => ({
       type: "task",
