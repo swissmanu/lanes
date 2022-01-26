@@ -31,6 +31,13 @@ jobs:
             compressed: ""
     steps:
       - uses: actions/checkout@v2
+      - name: Extract Version from Tag
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+      - name: Extract Version from Commit
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        run: echo "VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       - name: setup node
         uses: actions/setup-node@v1
         with:
@@ -53,16 +60,22 @@ jobs:
         run: |
           cd src-tauri && cargo update && cd ../
           yarn tauri build
-      - name: get version
-        run: echo ::set-env name=PACKAGE_VERSION::$(node -p "require('./package.json').version")
+
       - name: add version info for osx files
         if: matrix.platform == 'macos-latest'
         working-directory: ${{ format('./src-tauri/target/release/{0}', matrix.buildFolder ) }}
         run: |
-          mv Lanes.dmg Lanes_${{ env.PACKAGE_VERSION }}.dmg
+          mv Lanes.dmg Lanes_${{ env.VERSION }}.dmg
       - name: add version info for msi files
         if: matrix.platform == 'windows-latest'
         working-directory: ${{ format('./src-tauri/target/release/{0}', matrix.buildFolder ) }}
         run: |
-          ren Lanes.x64.msi Lanes_${{ env.PACKAGE_VERSION }}.x64.msi
-          # mv Lanes.x64.msi Lanes_${{ env.PACKAGE_VERSION }}.x64.msi
+          ren Lanes.x64.msi Lanes_${{ env.VERSION }}.x64.msi
+
+      - name: Publish Snapshot Artifact
+        uses: actions/upload-artifact@v2
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        with:
+          name: ${{ format('snapshot-{0}', matrix.platform ) }}
+          path: ${{ format('./src-tauri/target/release/{0}/*{1}', matrix.buildFolder, matrix.ext ) }}
+          retention-days: 5
