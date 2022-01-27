@@ -23,9 +23,7 @@ const Textarea = styled(AutoHeightTextarea)`
   padding: 1px 2px;
 
   &:focus {
-    color: black;
-    background: white;
-    cursor: unset;
+    cursor: initial;
   }
 `;
 
@@ -60,8 +58,10 @@ const TextEditor = React.forwardRef<HTMLTextAreaElement, TextEditorProps>(
       (e: React.KeyboardEvent) => {
         if (e.key === "Escape") {
           cancel();
+          e.preventDefault();
         } else if ((e.key === "Enter" && !e.shiftKey) || e.key === "Tab") {
           commit();
+          e.preventDefault();
         } else if (e.key === "Enter" && e.shiftKey && !allowInputLineBreak) {
           e.preventDefault();
         }

@@ -2,7 +2,7 @@ import React from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import styled from "styled-components";
-import { BoardViewModel, LaneViewModel } from "../model/viewModels";
+import { BoardViewModel, LaneViewModel, TaskViewModel } from "../model/viewModels";
 import moveCard from "../model/viewModels/moveCard";
 import { Tail } from "../util/tail";
 import CreateLane from "./CreateLane";
@@ -78,12 +78,19 @@ const Board: React.FC<BoardProps> = ({ board, onChange }) => {
     [board, onChange]
   );
 
-  const onMoveCard = React.useCallback(
+  const onMoveTask = React.useCallback(
     (...args: Tail<Parameters<typeof moveCard>>) => {
       const nextTasks = moveCard(board.tasks, ...args);
       if (nextTasks !== board.tasks) {
         onChange({ ...board, tasks: nextTasks });
       }
+    },
+    [board, onChange]
+  );
+
+  const onCreateTask = React.useCallback(
+    (task: Pick<TaskViewModel, "title" | "notes" | "laneId">) => {
+      onChange({ ...board, tasks: [...board.tasks, { ...task, id: "m", index: 0 }] });
     },
     [board, onChange]
   );
@@ -103,7 +110,8 @@ const Board: React.FC<BoardProps> = ({ board, onChange }) => {
                 lane={lane}
                 tasks={board.tasks.filter((t) => t.laneId === lane.id) /* TODO Do this better*/}
                 onChange={onChangeLane}
-                onMoveCard={onMoveCard}
+                onMoveTask={onMoveTask}
+                onCreateTask={onCreateTask}
               />
             </LaneContainer>
           ))}

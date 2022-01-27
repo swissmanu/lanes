@@ -15,6 +15,12 @@ declare module "styled-components" {
       focusedPlaceholderColor: string;
     };
 
+    createTask: {
+      background: string;
+      placeholderColor: string;
+      focusedPlaceholderColor: string;
+    };
+
     card: {
       background: string;
       color: string;

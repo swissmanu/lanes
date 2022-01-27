@@ -12,7 +12,7 @@ const Container = styled.div`
   background-color: ${(props) => props.theme.createLane.background};
   border-radius: 3px;
   max-height: 100%;
-  padding: 8px 8px 8px 14px;
+  padding: 8px;
 
   &:focus-within {
     background-color: ${(props) => props.theme.lane.background};

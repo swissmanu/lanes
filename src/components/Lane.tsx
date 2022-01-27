@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { LaneViewModel, TaskViewModel } from "../model/viewModels";
 import moveCard from "../model/viewModels/moveCard";
 import { Tail } from "../util/tail";
+import CreateTask from "./CreateTask";
 import DraggableTask from "./DraggableTask";
 import TextEditor from "./TextEditor";
 
@@ -13,6 +14,7 @@ const LaneContainer = styled.div`
   background-color: ${(props) => props.theme.lane.background};
   border-radius: 3px;
   max-height: 100%;
+  padding-bottom: 8px;
 `;
 
 const Header = styled.header`
@@ -36,20 +38,22 @@ const Tasks = styled.div`
   flex-direction: column;
   gap: 8px;
   padding: 0 8px;
+  margin-bottom: 8px;
 `;
 
-const Footer = styled.div`
-  height: 10px;
+const Footer = styled.footer`
+  padding: 0 8px;
 `;
 
 interface LaneProps {
   lane: LaneViewModel;
   tasks: ReadonlyArray<TaskViewModel>;
   onChange: (lane: LaneViewModel) => void;
-  onMoveCard: (...x: Tail<Parameters<typeof moveCard>>) => void;
+  onMoveTask: (...x: Tail<Parameters<typeof moveCard>>) => void;
+  onCreateTask: (task: Pick<TaskViewModel, "title" | "notes" | "laneId">) => void;
 }
 
-const Lane: React.FC<LaneProps> = ({ lane, tasks, onChange, onMoveCard }) => {
+const Lane: React.FC<LaneProps> = ({ lane, tasks, onChange, onMoveTask, onCreateTask: onCreateTaskInLane }) => {
   // const createOnChangeTask = React.useCallback(
   //   (index: number) => (task: TaskModel) => {
   //     onChange({
@@ -70,17 +74,24 @@ const Lane: React.FC<LaneProps> = ({ lane, tasks, onChange, onMoveCard }) => {
     [lane, onChange]
   );
 
+  const onCreateTask = React.useCallback(
+    (task: Pick<TaskViewModel, "title" | "notes">) => {
+      onCreateTaskInLane({ ...task, laneId: lane.id });
+    },
+    [lane.id, onCreateTaskInLane]
+  );
+
   const [, drop] = useDrop<TaskViewModel, unknown, unknown>(
     {
       accept: "task",
       canDrop: () => tasks.length === 0,
       hover: (item, monitor) => {
         if (monitor.isOver({ shallow: true }) && monitor.canDrop()) {
-          onMoveCard(item.id, 0, lane.id);
+          onMoveTask(item.id, 0, lane.id);
         }
       },
     },
-    [onMoveCard, tasks, lane.id]
+    [onMoveTask, tasks, lane.id]
   );
   drop(ref);
 
@@ -91,12 +102,16 @@ const Lane: React.FC<LaneProps> = ({ lane, tasks, onChange, onMoveCard }) => {
         <TitleEditor value={lane.title} onChange={onChangeLaneTitle} inTabOrder />
       </Header>
       <Content>
-        <Tasks>
-          {tasks.map((task, i) => (
-            <DraggableTask key={task.id} task={task} onChange={() => {}} onMove={onMoveCard} />
-          ))}
-        </Tasks>
-        <Footer />
+        {tasks.length > 0 ? (
+          <Tasks>
+            {tasks.map((task, i) => (
+              <DraggableTask key={task.id} task={task} onChange={() => {}} onMove={onMoveTask} />
+            ))}
+          </Tasks>
+        ) : null}
+        <Footer>
+          <CreateTask onCreate={onCreateTask} />
+        </Footer>
       </Content>
     </LaneContainer>
   );

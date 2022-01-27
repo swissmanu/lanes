@@ -3,6 +3,7 @@ import remarkParse from "remark-parse";
 import { unified } from "unified";
 import { Lane } from "../../model/lane";
 import { Task } from "../../model/task";
+import extractTitleAndNotesFromString from "../../util/extractTitleAndNotesFromString";
 import { Decoder } from "../io";
 
 const decodeMarkdown: Decoder<string> = (markdownString) => {
@@ -36,12 +37,14 @@ const decodeMarkdown: Decoder<string> = (markdownString) => {
           const [firstChild] = listItem.children;
           if (firstChild?.type === "paragraph") {
             const text = toMarkdown(firstChild.children[0]).trim();
-            const [title, ...notes] = text.split("\n");
-            tasks.push({
-              id: `t${++taskId}`,
-              title,
-              ...(notes.length > 0 ? { notes: notes.join("\n") } : {}),
-            });
+            const [title, notes] = extractTitleAndNotesFromString(text);
+            if (title) {
+              tasks.push({
+                id: `t${++taskId}`,
+                title,
+                notes,
+              });
+            }
           }
         }
       }

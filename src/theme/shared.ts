@@ -9,6 +9,11 @@ const sharedTheme: Omit<DefaultTheme, "board"> = {
     placeholderColor: "white",
     focusedPlaceholderColor: "black",
   },
+  createTask: {
+    background: "none",
+    placeholderColor: "#6c6e70",
+    focusedPlaceholderColor: "#6c6e70",
+  },
   card: {
     background: "white",
     color: "black",
