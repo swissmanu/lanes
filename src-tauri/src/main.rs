@@ -6,17 +6,14 @@
 use tauri::api::dialog;
 use tauri::{CustomMenuItem, Menu, MenuItem, Submenu, WindowBuilder, WindowUrl};
 
-#[derive(Clone, serde::Serialize)]
-struct OpenPayload {
-  path: String,
-}
-
 fn main() {
   // TODO Menus are fine for now... But improve once. Inspiration: https://github.com/probablykasper/tauri-template/blob/14b51d4f8702f5fdcb54cf528bdbf3be61e36372/src-tauri/src/menu.rs
   let new = CustomMenuItem::new("new".to_string(), "New Board").accelerator("Cmd+N");
   let new_window =
     CustomMenuItem::new("newWindow".to_string(), "New Window").accelerator("Cmd+Shift+N");
   let open = CustomMenuItem::new("open".to_string(), "Open…").accelerator("Cmd+O");
+  let save = CustomMenuItem::new("save".to_string(), "Save").accelerator("Cmd+S");
+  let saveAs = CustomMenuItem::new("saveAs".to_string(), "Save As…").accelerator("Cmd+Shift+S");
 
   let file_menu = Submenu::new(
     "File",
@@ -25,7 +22,9 @@ fn main() {
       .add_item(new_window)
       .add_item(open)
       .add_native_item(MenuItem::Separator)
-      .add_native_item(MenuItem::CloseWindow),
+      .add_native_item(MenuItem::CloseWindow)
+      .add_item(save)
+      .add_item(saveAs),
   );
 
   tauri::Builder::default()
@@ -59,28 +58,19 @@ fn main() {
         window
           .create_window(
             "test".into(),
-            WindowUrl::App("http://localhost:3000".into()),
+            WindowUrl::App("http://localhost:3000".into()), // TODO Fix
             |builder, attrs| (builder, attrs),
           )
           .unwrap();
       }
       "open" => {
-        dialog::FileDialogBuilder::default()
-          .add_filter("Markdown", &["md"])
-          .pick_file(move |path_buf| match path_buf {
-            Some(p) => {
-              event
-                .window()
-                .emit(
-                  "lanes://frontend/open",
-                  OpenPayload {
-                    path: p.to_str().unwrap().into(),
-                  },
-                )
-                .unwrap();
-            }
-            _ => {}
-          });
+        event.window().emit("lanes://frontend/open", {}).unwrap();
+      }
+      "save" => {
+        event.window().emit("lanes://frontend/save", {}).unwrap();
+      }
+      "saveAs" => {
+        event.window().emit("lanes://frontend/saveAs", {}).unwrap();
       }
       _ => {}
     })
