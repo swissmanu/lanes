@@ -7,7 +7,13 @@ const Layout = styled.div`
   justify-content: center;
   align-items: center;
   height: 100%;
-  background-color: #858585;
+  background-color: #252526;
+  color: #8e8e8e;
+
+  @media (prefers-color-scheme: light) {
+    background-color: #f3f3f3;
+    color: #252526;
+  }
 `;
 
 const Content = styled.div`
@@ -17,11 +23,14 @@ const Content = styled.div`
 `;
 
 const Title = styled.h1`
-  color: white;
-  opacity: 0.2;
+  color: #1a1a1b;
   font-weight: 800;
   font-size: 50px;
   margin-bottom: 50px;
+
+  @media (prefers-color-scheme: light) {
+    color: white;
+  }
 `;
 
 const Hotkeys = styled.dl`
@@ -32,12 +41,14 @@ const Hotkeys = styled.dl`
 `;
 
 const Hotkey = styled.dd`
-  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  gap: 2px;
 `;
 
 const Key = styled.span`
   border: 1px solid gray;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.13);
   padding: 1px 4px;
   border-radius: 4px;
   font-size: 90%;
