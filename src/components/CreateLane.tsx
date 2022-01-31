@@ -4,6 +4,7 @@ import TextEditor from "./TextEditor";
 
 interface CreateLaneProps {
   onCreate: (title: string) => void;
+  noOtherLanes?: boolean;
 }
 
 const Container = styled.div`
@@ -31,22 +32,21 @@ const LaneTitle = styled(TextEditor)`
   }
 `;
 
-const CreateLane: React.FC<CreateLaneProps> = ({ onCreate }) => {
-  const key = React.useRef(0);
-
+const CreateLane: React.FC<CreateLaneProps> = ({ onCreate, noOtherLanes = false }) => {
   const onChange = React.useCallback(
     (title: string) => {
       if (title.trim().length > 0) {
         onCreate(title);
-        key.current++; // Increment to force Rerender of TextEditor 🧙‍♂️
       }
     },
     [onCreate]
   );
 
+  const placeholder = React.useMemo(() => (noOtherLanes ? "Add a lane" : "Add another lane"), [noOtherLanes]);
+
   return (
     <Container>
-      <LaneTitle key={key.current} value="" placeholder="Add another lane" onChange={onChange} />
+      <LaneTitle value="" placeholder={placeholder} onChange={onChange} keepFocusOnChange />
     </Container>
   );
 };

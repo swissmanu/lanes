@@ -116,7 +116,7 @@ const Board: React.FC<BoardProps> = ({ board, onChange }) => {
             </LaneContainer>
           ))}
           <LaneContainer>
-            <CreateLane onCreate={onCreateLane} />
+            <CreateLane onCreate={onCreateLane} noOtherLanes={board.lanes.length === 0} />
           </LaneContainer>
         </Lanes>
       </DndProvider>
