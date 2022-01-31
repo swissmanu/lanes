@@ -8,6 +8,7 @@ interface TextEditorProps {
   placeholder?: string;
   inTabOrder?: boolean;
   allowInputLineBreak?: boolean;
+  keepFocusOnChange?: boolean;
   onChange: (value: string) => void;
 }
 
@@ -29,7 +30,15 @@ const Textarea = styled(AutoHeightTextarea)`
 
 const TextEditor = React.forwardRef<HTMLTextAreaElement, TextEditorProps>(
   (
-    { value: initialValue, className, placeholder, onChange, inTabOrder = false, allowInputLineBreak = false },
+    {
+      value: initialValue,
+      className,
+      placeholder,
+      onChange,
+      inTabOrder = false,
+      allowInputLineBreak = false,
+      keepFocusOnChange = false,
+    },
     forwardedRef
   ) => {
     const ref = React.useRef<HTMLTextAreaElement>(null);
@@ -40,9 +49,12 @@ const TextEditor = React.forwardRef<HTMLTextAreaElement, TextEditorProps>(
     React.useEffect(() => setValue(initialValue), [initialValue]);
 
     const commit = React.useCallback(() => {
-      ref.current?.blur();
+      if (!keepFocusOnChange) {
+        ref.current?.blur();
+      }
       onChange(value);
-    }, [onChange, value]);
+      setValue("");
+    }, [keepFocusOnChange, onChange, value]);
 
     const cancel = React.useCallback(() => {
       ref.current?.blur();
