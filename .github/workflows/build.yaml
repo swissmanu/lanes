@@ -56,17 +56,8 @@ jobs:
       - run: cargo update
         working-directory: src-tauri
 
-
-      # Temporary:
-      - run: yarn build
-      - run: |
-          cargo install tauri-cli --git https://github.com/swissmanu/tauri --branch multi-team-notarization
-        working-directory: src-tauri
-
       - name: build
-        #run: yarn tauri build
-        run: cargo tauri build
-        working-directory: src-tauri
+        run: yarn tauri build
         env:
           CI: true
           ENABLE_CODE_SIGNING: ${{ secrets.MACOS_SIGN_CERTIFICATE }}
