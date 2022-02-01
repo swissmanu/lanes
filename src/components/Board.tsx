@@ -3,6 +3,8 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import styled from "styled-components";
 import { BoardViewModel, LaneViewModel, TaskViewModel } from "../model/viewModels";
+import getIdForNewLaneFromViewModel from "../model/viewModels/getIdForNewLaneFromViewModel";
+import getIdForNewTaskFromViewModel from "../model/viewModels/getIdForNewTaskFromViewModel";
 import moveCard from "../model/viewModels/moveCard";
 import { Tail } from "../util/tail";
 import CreateLane from "./CreateLane";
@@ -72,7 +74,7 @@ const Board: React.FC<BoardProps> = ({ board, onChange }) => {
     (title: string) => {
       onChange({
         ...board,
-        lanes: [...board.lanes, { id: `l${board.lanes.length + 1}`, title }],
+        lanes: [...board.lanes, { id: getIdForNewLaneFromViewModel(board), title }],
       });
     },
     [board, onChange]
@@ -90,7 +92,7 @@ const Board: React.FC<BoardProps> = ({ board, onChange }) => {
 
   const onCreateTask = React.useCallback(
     (task: Pick<TaskViewModel, "title" | "notes" | "laneId">) => {
-      onChange({ ...board, tasks: [...board.tasks, { ...task, id: "m", index: 0 }] });
+      onChange({ ...board, tasks: [...board.tasks, { ...task, id: getIdForNewTaskFromViewModel(board), index: 0 }] });
     },
     [board, onChange]
   );
