@@ -28,14 +28,11 @@ jobs:
         platform: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - platform: ubuntu-latest
-            buildFolder: deb
-            extension: deb
+            releaseAssetPattern: "{deb,appimage}/*.{deb,AppImage.tar.gz,AppImage.tar.gz.sig}"
           - platform: macos-latest
-            buildFolder: dmg
-            extension: dmg
+            releaseAssetPattern: "{dmg,macos}/*.{dmg,tar.gz,tar.gz.sig}"
           - platform: windows-latest
-            buildFolder: msi
-            extension: msi
+            releaseAssetPattern: "msi/*.{msi,msi.zip,msi.zip.sig}"
     steps:
       - uses: actions/checkout@v2
       - name: Extract Version from Tag
@@ -83,8 +80,8 @@ jobs:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
 
       - name: Upload Release Assets
-        uses: softprops/action-gh-release@v1
+        uses: swissmanu/action-gh-release@1a1ac5ded61f844b792c9053fe2bf649946fa211
         with:
           draft: true
           fail_on_unmatched_files: true
-          files: ${{ format('./src-tauri/target/release/bundle/{0}/*.{1}', matrix.buildFolder, matrix.extension) }}
+          files: ${{ format('./src-tauri/target/release/bundle/{0}', matrix.releaseAssetPattern) }}
