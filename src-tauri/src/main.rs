@@ -3,28 +3,27 @@
   windows_subsystem = "windows"
 )]
 
-use tauri::api::dialog;
 use tauri::{CustomMenuItem, Menu, MenuItem, Submenu, WindowBuilder, WindowUrl};
 
 fn main() {
   // TODO Menus are fine for now... But improve once. Inspiration: https://github.com/probablykasper/tauri-template/blob/14b51d4f8702f5fdcb54cf528bdbf3be61e36372/src-tauri/src/menu.rs
-  let new = CustomMenuItem::new("new".to_string(), "New Board").accelerator("Cmd+N");
-  let new_window =
-    CustomMenuItem::new("newWindow".to_string(), "New Window").accelerator("Cmd+Shift+N");
-  let open = CustomMenuItem::new("open".to_string(), "Open…").accelerator("Cmd+O");
-  let save = CustomMenuItem::new("save".to_string(), "Save").accelerator("Cmd+S");
-  let saveAs = CustomMenuItem::new("saveAs".to_string(), "Save As…").accelerator("Cmd+Shift+S");
+  let new = CustomMenuItem::new("new".to_string(), "New Board").accelerator("CmdOrCtrl+N");
+  // let new_window = CustomMenuItem::new("newWindow".to_string(), "New Window").accelerator("CmdOrCtrl+Shift+N");
+  let open = CustomMenuItem::new("open".to_string(), "Open…").accelerator("CmdOrCtrl+O");
+  let save = CustomMenuItem::new("save".to_string(), "Save").accelerator("CmdOrCtrl+S");
+  let save_as =
+    CustomMenuItem::new("saveAs".to_string(), "Save As…").accelerator("CmdOrCtrl+Shift+S");
 
   let file_menu = Submenu::new(
     "File",
     Menu::new()
       .add_item(new)
-      .add_item(new_window)
+      // .add_item(new_window)
       .add_item(open)
       .add_native_item(MenuItem::Separator)
       .add_native_item(MenuItem::CloseWindow)
       .add_item(save)
-      .add_item(saveAs),
+      .add_item(save_as),
   );
 
   tauri::Builder::default()
