@@ -1,24 +1,24 @@
 [package]
-name = "app"
-version = "0.1.0"
-description = "A Tauri App"
 authors = ["you"]
-license = ""
-repository = ""
-default-run = "app"
-edition = "2018"
 build = "src/build.rs"
+default-run = "lanes"
+description = "Kanban using Markdown files."
+edition = "2018"
+license = ""
+name = "lanes"
+repository = ""
+version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.0.0-beta.4" }
+tauri-build = {version = "1.0.0-beta.4"}
 
 [dependencies]
+serde = {version = "1.0", features = ["derive"]}
 serde_json = "1.0"
-serde = { version = "1.0", features = ["derive"] }
-tauri = { git = "https://github.com/tauri-apps/tauri", branch = "next", features = ["api-all"] }
+tauri = {git = "https://github.com/tauri-apps/tauri", branch = "next", features = ["api-all"]}
 
 [features]
-default = [ "custom-protocol" ]
-custom-protocol = [ "tauri/custom-protocol" ]
+custom-protocol = ["tauri/custom-protocol"]
+default = ["custom-protocol"]
